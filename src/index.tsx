@@ -1,12 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import { ApolloProvider } from '@apollo/react-hooks'
+import { ApolloClient } from 'apollo-client'
+
+import { App } from './components/App';
+import { createClient } from './helpers/createClient'
+
 import * as serviceWorker from './serviceWorker';
+import './index.css';
+
+const Loading: React.FC<{}> = () => {
+  return <p>Loading...</p>
+}
+
+const Root: React.FC<{}> = () => {
+  const [client, setClient] = useState<ApolloClient<any>>()
+
+  useEffect(() => {
+    createClient().then(client => setClient(client))
+  }, [])
+
+  return !client ? <Loading /> : <ApolloProvider client={client}><App /></ApolloProvider>
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Root />
   </React.StrictMode>,
   document.getElementById('root')
 );
