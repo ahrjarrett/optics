@@ -31,7 +31,7 @@ function dToMs(d: Date): number {
   return new Date(d).getTime()
 }
 
-const DrawTooltip: React.FC<TooltipConfig> = ({ context, overrides, }) => {
+const DrawTooltip: React.FC<TooltipConfig> = ({ context, overrides }) => {
   const tooltipRef = useRef<SVGGElement | null>(null)
   const { xs, ys, xScale, yScale } = context
 
