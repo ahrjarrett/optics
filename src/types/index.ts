@@ -30,10 +30,12 @@ export type MockData = {
 }
 
 
-export type ContextType<T> = {
+export type ContextType<T, S> = {
   data: T,
   x: number,
   y: number,
+  xs: Array<number>,
+  ys: Array<Array<S>>,
   width: number,
   height: number,
   d3Ref: React.MutableRefObject<SVGSVGElement | null>,
@@ -43,7 +45,13 @@ export type ContextType<T> = {
 
 export type AppData = ReadonlyRecord<string, Array<Update>>
 
-export type Context = ContextType<AppData>
+export type Context = ContextType<AppData, Update>
 
 export type AppState = AsyncData<Error, AppData>
 
+export type Margin = {
+  top: number,
+  bottom: number,
+  left: number,
+  right: number,
+}

@@ -70,13 +70,12 @@ const DrawAxis: React.FC<AxisConfig> = ({ context, overrides, }) => {
         .attr('y', textOffset.y)
         .attr('font-size', 20)
         .attr('font-family', 'GothamNarrowMedium'))
-  }, [gRef.current, axis])
+  }, [gRef, axis, overrides.formatter, textOffset.x, textOffset.y])
 
   return (
     <g ref={gRef} transform={`translate(${x}, ${y})`}></g>
   )
 }
-
 
 export function Axis(props: AxisOverrides) {
   const context = useAppContext()
