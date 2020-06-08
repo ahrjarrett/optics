@@ -30,7 +30,6 @@ export type MockData = {
   users: Array<User>,
 }
 
-
 export type ContextType<T, S> = {
   data: T,
   x: number,

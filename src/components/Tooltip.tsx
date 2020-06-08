@@ -30,6 +30,7 @@ const styles = {
     width: 190,
     fill: '#fff',
     borderRadius: 4,
+    outline: '1px solid rgba(0, 0, 0, 0.16)',
     // transform: `translate(30px, 30px)`
   },
   foreignObject: {
@@ -84,6 +85,7 @@ const DrawTooltip: React.FC<TooltipConfig> = ({ context, overrides }) => {
       .attr('transform', 'translate(30, 30)')
       .attr('fill', 'none')
       .attr('pointer-events', 'all')
+      .attr('cursor', 'pointer')
 
     overlay.on('mouseover', () => {
       setHovering(true)
@@ -125,8 +127,8 @@ const DrawTooltip: React.FC<TooltipConfig> = ({ context, overrides }) => {
 
   return (
     <g style={{ ...styles.outer, display: hovering ? undefined : 'none' }} ref={tooltipRef}>
-      <g transform={`translate(45, 45)`} style={styles.inner}>
-        <circle r='6' stroke='none' fill='blue' cx='-15' cy='-15' />
+      <g transform={`translate(50, 40)`} style={styles.inner}>
+        <circle r='6' stroke='none' fill='blue' cx='-20' cy='-10' />
         <rect style={styles.rect} className='box' ref={boxRef} />
         <foreignObject style={styles.foreignObject}>
           <tspan x={7.5} y={27.5} className='heading' style={styles.heading} />
