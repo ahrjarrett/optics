@@ -6,7 +6,7 @@ import { AxisDomain } from 'd3-axis'
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord'
 import { some, none, Option } from 'fp-ts/lib/Option'
 
-import { Axis } from '../Axes'
+import { Axis } from '../Axis'
 import { Tooltip } from '../Tooltip'
 import { AppData, ContextType, Margin, Update } from '../../types'
 import { identity, isNotNil, min, max } from '../../helpers/utils'
@@ -68,7 +68,7 @@ export const LineChart: React.FC<Props> = ({ data, width, height, x, y, title, s
 
   return (
     <Context.Provider value={contextValue}>
-      <svg ref={d3Ref} width="100%" height={height + 30}>
+      <svg ref={d3Ref} width="100%" height={height + 30} overflow='overlay'>
         <g transform={`translate(30, 30)`}>
           <path
             d={line(xs) as string | undefined}
