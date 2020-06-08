@@ -5,7 +5,7 @@ import { AxisDomain, axisLeft, axisBottom } from 'd3-axis'
 import { select } from 'd3-selection'
 
 import { Context } from '../types'
-import { useAppContext } from './LineChart'
+import { useAppContext } from './LineChart/index'
 
 type Orientation = 'LEFT' | 'BOTTOM' //"LEFT" | "TOP" | "BOTTOM" | "RIGHT"
 
@@ -76,6 +76,7 @@ const DrawAxis: React.FC<AxisConfig> = ({ context, overrides, }) => {
     <g ref={gRef} transform={`translate(${x}, ${y})`}></g>
   )
 }
+
 
 export function Axis(props: AxisOverrides) {
   const context = useAppContext()

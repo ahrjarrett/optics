@@ -2,6 +2,7 @@ import { Option } from 'fp-ts/lib/Option'
 import { Either } from 'fp-ts/lib/Either'
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord'
 
+
 export type AsyncData<E, A> = Option<Either<E, A>>
 
 export type Error = string
@@ -54,4 +55,10 @@ export type Margin = {
   bottom: number,
   left: number,
   right: number,
+}
+
+export type Nil = null | undefined
+
+declare global {
+  interface Window { __namespace__: any }
 }
