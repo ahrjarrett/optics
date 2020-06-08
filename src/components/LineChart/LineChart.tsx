@@ -22,6 +22,11 @@ const styles = {
     textAlign: 'center' as const,
     fontFamily: 'GothamNarrowLight',
     marginTop: 10
+  },
+  area: {
+    // fill: 'url(#area-gradient)',
+    fill: 'rgba(0, 0, 0, 0.5)',
+    strokeWidth: '05px'
   }
 }
 
@@ -63,6 +68,9 @@ export const LineChart: React.FC<Props> = ({ data, width, height, x, y, title, s
     .x(week => xScale(week))
     .y(week => yScale(data[week].length))
 
+  const area = d3.area<number>().x(week => xScale(week)).y0(height).y1(week => yScale(data[week].length))
+
+
   console.log('weeks', xs)
   console.log('counts', ys)
 
@@ -75,15 +83,19 @@ export const LineChart: React.FC<Props> = ({ data, width, height, x, y, title, s
             style={{ stroke: "#2A5CDB", strokeWidth: 3, /*strokeMiterlimit: 0.5,*/ fillOpacity: 0 }}
           />
         </g>
+        <g transform={`translate(30, 30)`}>
+          <path className='area' d={area(xs) as string | undefined} style={styles.area} />
+        </g>
 
         <Axis ticks={NUMBER_OF_TICKS_Y} orientation={'LEFT'} />
         <Axis ticks={NUMBER_OF_TICKS_X} formatter={formatY} orientation={'BOTTOM'} />
         <Tooltip />
 
       </svg>
+
       {isNotNil(title) && <h3 style={styles.title}>{title}</h3>}
       {isNotNil(subtitle) && <p style={styles.subtitle}>{subtitle}</p>}
-    </Context.Provider>
+    </Context.Provider >
   )
 }
 
