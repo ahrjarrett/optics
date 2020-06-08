@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { createContext, useContext, useRef } from 'react'
 import * as d3 from 'd3'
 import { scaleTime, scaleLinear } from 'd3-scale'
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord'
+import { some, none, Option } from 'fp-ts/lib/Option'
 
-import { Update } from '../types'
+import { ContextType, AppData, Update } from '../types'
+import { Axis } from './Axes'
+import { identity, min, max } from '../helpers/utils'
 
 type Props = {
   data: ReadonlyRecord<string, Array<Update>>,
@@ -13,16 +16,11 @@ type Props = {
   y: number,
 }
 
-function min(list: ReadonlyArray<number>): number {
-  return list.reduce((acc, curr) => curr < acc ? curr : acc, Infinity)
+const NUMBER_OF_TICKS_Y = 3
 
-}
+export const Context = createContext<Option<ContextType<AppData>>>(none)
 
-function max<A>(list: ReadonlyArray<A>, accessor: (item: A) => number): number {
-  return list.reduce((acc, curr) => accessor(curr) > acc ? accessor(curr) : acc, -Infinity)
-}
-
-function identity<A>(a: A) { return a }
+export const useAppContext = () => useContext(Context)
 
 export const LineChart: React.FC<Props> = ({ data, width, height, x, y }) => {
   const weeks = Object.keys(data).map(str => parseInt(str, 10)).slice().sort((a, b) => b > a ? 1 : 0)
@@ -39,13 +37,22 @@ export const LineChart: React.FC<Props> = ({ data, width, height, x, y }) => {
     .x(week => xScale(week))
     .y(week => yScale(data[week].length))
 
+  const d3Ref = useRef<SVGSVGElement | null>(null)
+
+  const contextValue = some({ d3Ref: d3Ref, xScale, yScale, data })
+
   return (
-    <g transform={`translate(${x}, ${y})`}>
-      <path
-        d={line(weeks) as string | undefined}
-        style={{ stroke: "steelblue", strokeWidth: 1, fillOpacity: 0 }}
-      />]]
-   </g>
+    <Context.Provider value={contextValue}>
+      <svg width="100%" height="500" ref={d3Ref}>
+        <g transform={`translate(${x}, ${y})`}>
+          <path
+            d={line(weeks) as string | undefined}
+            style={{ stroke: "#2A5CDB", strokeWidth: 2, fillOpacity: 0 }}
+          />
+        </g>
+        <Axis ticks={NUMBER_OF_TICKS_Y} orientation={'LEFT'} />
+      </svg>
+    </Context.Provider>
   )
 }
 
