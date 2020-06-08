@@ -75,9 +75,6 @@ const DrawTooltip: React.FC<TooltipConfig> = ({ context, overrides }) => {
   const boxRef = useRef<SVGRectElement | null>(null)
   const tooltip = select(tooltipRef.current)
 
-
-
-
   useEffect(() => {
     const overlay = select(context.d3Ref.current).append('rect')
       .attr('width', context.width)
@@ -103,26 +100,23 @@ const DrawTooltip: React.FC<TooltipConfig> = ({ context, overrides }) => {
   }
 
   function mousemove(this: ContainerElement) {
-    console.log('calling')
     const week = xScale.invert(mouse(this)[0])
     const w = dToMs(week)
-    // const dayOfWeek = new Date(week).getDay()
-
     const bisect = bisector<number, number>((a, b) => {
       return w - a > w - b ? 1 : -1
     }).left
-    const i = bisect(xs, w) - 1
 
+    const i = bisect(xs, w) - 1
     const y = ys[i].length
     const x = xs[i]
     const yValue = yScale(y)
     const xValue = xScale(xs[i])
-
+    /*** SIDE-EFFECTS: ***/
     const tooltip = select(tooltipRef.current).attr('transform', `translate(${xValue}, ${yValue})`)
     const heading = tooltip.select('tspan.heading')
       .text(humanizeDateString(dateToWeekString(week)))
-
     const subheading = tooltip.select('tspan.subheading').text(makeSubtitle(y))
+    /*** END SIDE-EFFECTS: ***/
   }
 
   return (
