@@ -34,8 +34,6 @@ export function max<A>(list: ReadonlyArray<A>, accessor: (item: A) => number): n
 
 export function identity<A>(a: A) { return a }
 
-// function isDate(a: any): boolean {
-//   return isNull(a) ? false : a.getTime?.() === a.getTime?.()
-// }
-//export declare function isNone<A>(fa: Option<A>): fa is None
-export declare function isDate(maybeDate: Date | string | number): maybeDate is Date
+export function isDate(a: any): boolean {
+  return isNull(a) ? false : a.getTime?.() === a.getTime?.()
+}

@@ -16,15 +16,15 @@ declare global {
     interface Window { __namespace__: any }
 }
 
+window.__namespace__ = window.__namespace__ || { d3time: d3time }
+
 const onLoading = () => <Loading />
 const onError = (err: Error) => <p>Error: {err}</p>
 const onSuccess = (data: AppData) =>
-    <LineChart data={data} x={100} y={100} width={500} height={200} />
+    <LineChart data={data} x={100} y={100} width={1000} height={220} />
 
 export function App() {
     const [state, setState] = useState<AppState>(none)
-
-    window.__namespace__ = window.__namespace__ || { d3time: d3time }
 
     useEffect(() => {
         (async () => {
@@ -43,5 +43,3 @@ export function App() {
         {pipe(state, foldOption(onLoading, foldEither(onError, onSuccess)))}
     </div>
 }
-
-

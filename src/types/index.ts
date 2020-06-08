@@ -31,10 +31,14 @@ export type MockData = {
 
 
 export type ContextType<T> = {
+  data: T,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
   d3Ref: React.MutableRefObject<SVGSVGElement | null>,
   xScale: d3.ScaleTime<number, number>,
   yScale: d3.ScaleLinear<number, number>,
-  data: T
 }
 
 export type AppData = ReadonlyRecord<string, Array<Update>>
@@ -42,5 +46,4 @@ export type AppData = ReadonlyRecord<string, Array<Update>>
 export type Context = ContextType<AppData>
 
 export type AppState = AsyncData<Error, AppData>
-
 
