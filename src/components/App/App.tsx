@@ -22,7 +22,7 @@ const onSuccess = (data: AppData) => <>
     <ViewData data={data} />
 </>
 
-export function App() {
+export function App(): JSX.Element {
     const [state, setState] = useState<AppState>(none)
 
     useEffect(() => {
