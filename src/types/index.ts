@@ -1,7 +1,8 @@
+import { MutableRefObject } from 'react'
+import { ScaleLinear } from 'd3'
 import { Option } from 'fp-ts/lib/Option'
 import { Either } from 'fp-ts/lib/Either'
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord'
-
 
 export type AsyncData<E, A> = Option<Either<E, A>>
 
@@ -24,18 +25,29 @@ export interface User {
   id: string;
 }
 
-export type MockData = {
+export type Input = {
   updates: Array<Update>,
   goals: Array<Goal>,
   users: Array<User>,
 }
 
-export type ContextType<T, S> = {
-  data: T,
-  x: number,
+export type WeekMonth = {
+  week: number,
+  month: number,
+  monthString: string,
+  weekStart: string,
+  weekEnd: string
+}
+
+export type Datum = {
+  x: WeekMonth,
   y: number,
-  xs: Array<number>,
-  ys: Array<Array<S>>,
+  updates: Array<Update>,
+}
+
+export type ContextType = {
+  data: Array<Datum>,
+  mos: Array<number>,
   width: number,
   height: number,
   d3Ref: React.MutableRefObject<SVGSVGElement | null>,
@@ -43,9 +55,17 @@ export type ContextType<T, S> = {
   yScale: d3.ScaleLinear<number, number>,
 }
 
-export type AppData = ReadonlyRecord<string, Array<Update>>
+export type SVGNode = SVGSVGElement | null
+export type D3Ref = MutableRefObject<SVGNode>
+export type YScale = ScaleLinear<number, number>
 
-export type Context = ContextType<AppData, Update>
+export type GroupedInput = {
+  week: string,
+  updates: Array<Update>
+}
+
+export type AppData = Input
+
 
 export type AppState = AsyncData<Error, AppData>
 
