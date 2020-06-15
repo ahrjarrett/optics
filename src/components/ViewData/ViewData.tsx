@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { AppData } from '../types'
+import { AppData } from 'types'
 
 type Props = {
   data: AppData
