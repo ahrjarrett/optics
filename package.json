@@ -18,6 +18,7 @@
     "apollo-link": "^1.2.14",
     "apollo-link-context": "^1.0.20",
     "apollo-link-http": "^1.5.17",
+    "dayjs": "^1.8.28",
     "d3": "^5.16.0",
     "d3-axis": "^1.0.12",
     "d3-selection": "^1.4.1",
