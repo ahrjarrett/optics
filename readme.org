@@ -1,0 +1,45 @@
+#+TITLE: New Goals: Frontend Architecture
+#+AUTHOR: Andrew Jarrett <ahrjarrett@gmail.com>
+
+
+* Links
+
+- Figma: [[https://www.figma.com/file/YXKa7WB6W0WvA0wzGDIBCJ/Kazoo-Library?node-id=10510%3A0][Kazoo Charts Library]]
+
+* React
+
+- Use ADTs for modeling props/state
+  - Sum types (tagged unions) can simplify React patterns that are often taken for granted
+    - For example, every time we add a boolean to a component's model, we double the component's "possible" states; even Apollo Client is guilty of using `loading`, `success` and `error` values in an interface, when a type might be more appropriate
+
+      #+BEGIN_SRC typescript
+import { Option } from 'fp-ts/lib/Option'
+import { Either } from 'fp-ts/lib/Either'
+
+type AsyncResource<Err, Data> = Option<Either<Err, Data>>
+
+      #+END_SRC
+
+- Use narrower types; not sure how to enforce this except to dig into early PRs and ask/teach
+   
+  *Examples:*
+
+  * [X] REA: `ReadOnlyArray` should be the default since it is more explicit and gives us immutability at compile time for free
+  * [ ] +const assertions+: [[https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#const-assertions][const assertions]] on props to enforce readonly properties, prevent widening?
+    + Looks like const assertions aren't immediately fully immutable
+    #+BEGIN_SRC typescript
+
+
+
+    #+END_SRC
+
+- Make escape hatches explicit upfront
+
+  Possible examples:
+  - Add a namespaced / dunderscored prop to globals like ~window~ or ~global~ for debugging in browser/ssr, for example
+
+
+
+- CSS
+  - [ ] styled-components
+  - [ ] tailwind
