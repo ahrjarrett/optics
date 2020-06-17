@@ -1,16 +1,17 @@
-import React, {createContext, useContext, useEffect, useRef} from 'react'
-import * as d3 from 'd3'
-import dayjs from 'dayjs'
-import minMax from 'dayjs/plugin/minMax'
-import weekOfYear from 'dayjs/plugin/weekOfYear'
-import {scaleTime, scaleLinear} from 'd3-scale'
-import {AxisDomain} from 'd3-axis'
-import {select} from 'd3-selection'
-import {some, none, Option} from 'fp-ts/lib/Option'
-import {pipe} from 'fp-ts/lib/pipeable'
+import React, {createContext, useContext, useEffect, useRef} from 'react';
+import * as d3 from 'd3';
+import dayjs from 'dayjs';
+import minMax from 'dayjs/plugin/minMax';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+import {scaleTime, scaleLinear} from 'd3-scale';
+import {AxisDomain} from 'd3-axis';
+import {select} from 'd3-selection';
+import {some, none, Option} from 'fp-ts/lib/Option';
+import {ReadonlyRecord} from 'fp-ts/lib/ReadonlyRecord';
+import {pipe} from 'fp-ts/lib/pipeable';
 
-import {Axis} from 'components/Axis'
-import {Tooltip} from 'components/Tooltip'
+import {Axis} from 'components/Axis';
+import {Tooltip} from 'components/Tooltip';
 import {
   AppData,
   ContextType,
@@ -21,7 +22,8 @@ import {
   SVGNode,
   D3Ref,
   YScale,
-} from 'types'
+} from 'types';
+import {Input, Update} from 'types/codecs';
 
 import {
   groupBy,
@@ -31,10 +33,10 @@ import {
   min,
   prop,
   zipRecord,
-} from 'helpers/utils'
+} from 'helpers/utils';
 
-dayjs.extend(minMax)
-dayjs.extend(weekOfYear)
+dayjs.extend(minMax);
+dayjs.extend(weekOfYear);
 
 // const toDesc = (a: number, b: number) => (a > b ? 1 : -1)
 // const sortData = (d: Datum[]) => d.sort((d1, d2) => (d1.x > d2.x ? 1 : -1))
@@ -55,38 +57,32 @@ const styles = {
     fill: 'url(#area-gradient)',
     strokeWidth: '05px',
   },
-}
+};
 
 type Props = {
-  input: AppData
-  width: number
-  height: number
-  x: number
-  y: number
-  margin: Margin
-  title?: string
-  subtitle?: string
-}
+  input: Input;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+  margin: Margin;
+  title?: string;
+  subtitle?: string;
+};
 
-const NUMBER_OF_TICKS_Y = 3
-const NUMBER_OF_TICKS_X = 4
+const NUMBER_OF_TICKS_Y = 3;
+const NUMBER_OF_TICKS_X = 4;
 
 const formatY = (domain: AxisDomain) => {
-  console.log('domain', domain)
-  return domain.toString().slice(4, 7).toUpperCase()
-}
+  console.log('domain', domain);
+  return domain.toString().slice(4, 7).toUpperCase();
+};
 
-export const Context = createContext<Option<ContextType>>(none)
-
-export const useAppContext = () => useContext(Context)
-
-// function head<A>(as: NonEmptyArray<A>): A { return as[0] }
-// function tail<A>(as: NonEmptyArray<any>): Array<A> { return as.slice(1) }
-
-// const grouped = groupBy(groupByWeek)(result)
+export const Context = createContext<Option<ContextType>>(none);
+export const useAppContext = () => useContext(Context);
 
 function freeMonoid<A>(a: A) {
-  return [a]
+  return [a];
 }
 
 const months: Record<number, string> = {
@@ -102,7 +98,7 @@ const months: Record<number, string> = {
   9: 'OCT',
   10: 'NOV',
   11: 'DEC',
-}
+};
 
 const toX = (datum: GroupedInput): {x: WeekMonth} =>
   freeMonoid(datum)
@@ -118,19 +114,19 @@ const toX = (datum: GroupedInput): {x: WeekMonth} =>
         weekStart: d.format('M-D-YYYY'),
         weekEnd: d.add(7, 'day').format('M-D-YYYY'),
       },
-    }))[0]
-const getUpdates = prop('updates')
-const getUpdatesLength = (d: GroupedInput) => prop('updates')(d).length
+    }))[0];
+const getUpdates = prop('updates');
+const getUpdatesLength = (d: GroupedInput) => prop('updates')(d).length;
 
 const toY = (datum: GroupedInput) => ({
   updates: getUpdates(datum),
   y: getUpdatesLength(datum),
-})
+});
 
 const buildDataObjs = (datum: GroupedInput): Datum => ({
   ...toX(datum),
   ...toY(datum),
-})
+});
 
 function useGradient(ref: D3Ref, yScale: YScale) {
   useEffect(() => {
@@ -151,36 +147,43 @@ function useGradient(ref: D3Ref, yScale: YScale) {
       .enter()
       .append('stop')
       .attr('offset', d => d.offset)
-      .attr('stop-color', d => d.color)
-  }, [ref, yScale])
+      .attr('stop-color', d => d.color);
+  }, [ref, yScale]);
 }
+
+// const data: Datum[] = pipe<
+//   ReadonlyArray<Update>,
+//   ReadonlyRecord<string, Update[]>,
+//   ReadonlyArray<GroupedInput>
+// >(input.updates, groupBy<string, Update>(groupByWeek), zipRecord).map(
+//   buildDataObjs,
+// );
 
 export const LineChart: React.FC<Props> = ({
   input,
   width,
   height,
-  x,
-  y,
   title,
   subtitle,
 }) => {
-  const data = pipe(input.updates, groupBy(groupByWeek), zipRecord).map(
-    buildDataObjs,
-  )
+  const data = pipe(
+    input.updates,
+    groupBy<string, Update>(groupByWeek),
+    zipRecord,
+  ).map(buildDataObjs);
 
-  const xs = data.map(prop('x'))
-  const ys = data.map(prop('y'))
-  const wks = xs.map(prop('week'))
-  const mos = xs.map(prop('month'))
-  //const updates = data.map(prop('updates'))
+  const xs = data.map(prop('x'));
+  const ys = data.map(prop('y'));
+  const wks = xs.map(prop('week'));
+  const mos = xs.map(prop('month'));
 
-  const xmin = min(wks)
-  const xmax = max(wks)
-  const ymax = max(ys)
+  const xmin = min(wks);
+  const xmax = max(wks);
+  const ymax = max(ys);
 
-  const d3Ref = useRef<SVGNode>(null)
-  const xScale = scaleTime().domain([xmin, xmax]).range([0, width])
-  const yScale = scaleLinear().domain([0, ymax]).range([height, 0])
+  const d3Ref = useRef<SVGNode>(null);
+  const xScale = scaleTime().domain([xmin, xmax]).range([0, width]);
+  const yScale = scaleLinear().domain([0, ymax]).range([height, 0]);
   const contextValue = some({
     d3Ref: d3Ref,
     data,
@@ -189,20 +192,20 @@ export const LineChart: React.FC<Props> = ({
     xScale,
     yScale,
     mos,
-  })
+  });
 
   const line = d3
     .line<Datum>()
     .x(d => xScale(d.x.week))
-    .y(d => yScale(d.y))
+    .y(d => yScale(d.y));
 
   const area = d3
     .area<Datum>()
     .x(d => xScale(d.x.week))
     .y0(height)
-    .y1(d => yScale(d.y))
+    .y1(d => yScale(d.y));
 
-  useGradient(d3Ref, yScale)
+  useGradient(d3Ref, yScale);
 
   return (
     <Context.Provider value={contextValue}>
@@ -235,5 +238,5 @@ export const LineChart: React.FC<Props> = ({
       {isNotNil(title) && <h3 style={styles.title}>{title}</h3>}
       {isNotNil(subtitle) && <p style={styles.subtitle}>{subtitle}</p>}
     </Context.Provider>
-  )
-}
+  );
+};

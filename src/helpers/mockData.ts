@@ -1,4 +1,4 @@
-import {Input} from '../types'
+import {Input} from 'types/codecs';
 
 const localData = {
   goals: [
@@ -109,14 +109,14 @@ const localData = {
     {id: '5597', date: new Date('March 05 2020'), goal: '111', user: '18'},
     {id: '5598', date: new Date('March 05 2020'), goal: '112', user: '18'},
   ],
-}
+};
 
 function castAsDate(str: string): Date {
-  return new Date(str)
+  return new Date(str);
 }
 
 function prepData(data: {updates: any; goals: any; users: any}): Input {
-  const {updates, goals, users} = data
+  const {updates, goals, users} = data;
 
   return {
     updates: updates.map(({date, ...rest}: {date: any; rest: any}) => ({
@@ -129,9 +129,9 @@ function prepData(data: {updates: any; goals: any; users: any}): Input {
       updatedAt: castAsDate(updatedAt),
     })),
     users,
-  }
+  };
 }
 
-const preppedData = prepData(localData)
+const preppedData = prepData(localData);
 
-export const mockData = (): Promise<Input> => Promise.resolve(preppedData)
+export const mockData = (): Promise<Input> => Promise.resolve(preppedData);
