@@ -12,14 +12,27 @@ const DateFromString = new t.Type<Date, string, unknown>(
   a => a.toISOString(),
 );
 
+export interface UUIDBrand {
+  readonly UUID: unique symbol;
+}
+
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export type UUID = t.Branded<string, UUIDBrand>;
+
+export const UUIDCodec = t.brand(
+  t.string,
+  (s): s is UUID => uuidRegex.test(s),
+  'UUID',
+);
+
 export type User = t.TypeOf<typeof UserCodec>;
 export const UserCodec = t.type({
-  id: t.readonly(t.string),
+  id: UUIDCodec,
 });
 
 export type Goal = t.TypeOf<typeof GoalCodec>;
 export const GoalCodec = t.type({
-  id: t.readonly(t.string),
+  id: UUIDCodec,
   createdAt: DateFromString,
   updatedAt: DateFromString,
 });
@@ -27,7 +40,7 @@ export const GoalCodec = t.type({
 export type Update = t.TypeOf<typeof UpdateCodec>;
 export const UpdateCodec = t.readonly(
   t.type({
-    id: t.string,
+    id: UUIDCodec,
     date: DateFromString,
     goal: t.string,
     user: t.string,
