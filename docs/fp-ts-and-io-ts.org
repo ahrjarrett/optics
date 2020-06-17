@@ -1,0 +1,46 @@
+make
+
+loading
+
+
+[[https://gcanti.github.io/io-ts/#error-reporters][Error Reporter]] docs
+
+We should have different reporters when in dev versus prod
+
+Prod: handle ValdationError[] by parsing the io-ts AST as a free monoid
+of the AST itself (as a string), then concatting values that refine or enrich the data, for example:
+
+#+BEGIN_SRC typescript
+class ProductionReporter implements Lazy<IO<LoggingService> {
+  reporter: () => {
+
+const {
+  offendingValue,
+  
+} = useParser(ParsingStrategy.PROD)
+
+const ma = freeMonoid.of({ tree: ValidationAST })
+  .concat(
+    { source: Context.DataURI }
+  )
+
+const mb = freeMonoid.of(
+  map(
+    ma
+      .chain({ offendingValue })
+      .chain({ expected })
+      .chain({ location })
+      .chain({ /* other relevant data? userId, localStorage, cookies? */ })
+    )
+  , this
+)
+
+  const loggingService = IO.of(logger): void
+    const value = ma.concat(mb)
+  
+  return () => loggingService(value)
+}
+#+END_SRC
+
+Dev reporter would be an DOM tree that recursively renders the AST in a way that is (hopefully) meaningful for the developer? Not sure what this would look like, but I think this element could live outside the app itself using a portal from React.DOM.
+

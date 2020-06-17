@@ -1,0 +1,24 @@
+* ADTs & the Domain Model
+
+This ticket is orthogonal to the question of how our domain model handles validation errors at runtime
+
+Option<loading
+  TaskEither<
+    FetchError,
+    Either<
+      ValidationError,
+      ComponentData>>>
+
+Our domain model is a disjoint union with an initial cardinality of 4:
+
+type Model = Loading | FetchError | ValidationError | Success
+import { onLoading, onFetchError, onValidationError, onSuccess } from 'elsewhere'
+
+//App would looks like this?
+
+const App = () => pipe(
+  appState,
+  0ption.fold(onLoading),
+  TaskEither().fold(
+    onFetchError, Either.chain(
+      onValidationError, onSuccess))

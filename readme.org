@@ -1,45 +1,74 @@
-#+TITLE: New Goals: Frontend Architecture
+#+TITLE: specs 🧐
 #+AUTHOR: Andrew Jarrett <ahrjarrett@gmail.com>
+
+
+#+BEGIN_QUOTE
+"Keep your specs peeled."
+-- Brendan, _Brick_ (2006)
+#+END_QUOTE
 
 
 * Links
 
-- Figma: [[https://www.figma.com/file/YXKa7WB6W0WvA0wzGDIBCJ/Kazoo-Library?node-id=10510%3A0][Kazoo Charts Library]]
-
-* React
-
-- Use ADTs for modeling props/state
-  - Sum types (tagged unions) can simplify React patterns that are often taken for granted
-    - For example, every time we add a boolean to a component's model, we double the component's "possible" states; even Apollo Client is guilty of using `loading`, `success` and `error` values in an interface, when a type might be more appropriate
-
-      #+BEGIN_SRC typescript
-import { Option } from 'fp-ts/lib/Option'
-import { Either } from 'fp-ts/lib/Either'
-
-type AsyncResource<Err, Data> = Option<Either<Err, Data>>
-
-      #+END_SRC
-
-- Use narrower types; not sure how to enforce this except to dig into early PRs and ask/teach
-   
-  *Examples:*
-
-  * [X] REA: `ReadOnlyArray` should be the default since it is more explicit and gives us immutability at compile time for free
-  * [ ] +const assertions+: [[https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#const-assertions][const assertions]] on props to enforce readonly properties, prevent widening?
-    + Looks like const assertions aren't immediately fully immutable
-    #+BEGIN_SRC typescript
+- Figma
+  + [[https://www.figma.com/file/YXKa7WB6W0WvA0wzGDIBCJ/Kazoo-Library?node-id=10510%3A0][Kazoo Charts Library]]
+- JIRA
+  + [[https://projectnewco.atlassian.net/browse/KAZ-2688][[2166] Epic: New Goals - Insights]]
+  + [3128] [[https://projectnewco.atlassian.net/browse/KAZ-3128][Confetti - Widget - Update Status Area Chart]]
 
 
+* Goals
 
-    #+END_SRC
+1. [Short-term] Ship new goals on time, without incurring unnecessary technical debt
+2. [Mid-term] Simplify how Kazoo creates and maintains data visualizations
+   - *Benefit:* Less time to market generally
+   - *Benefit:* Decreases engineering's dependence on Insights team for small changes
+3. [Long-term] Architectural flexibility
+4. Have fun
+     
 
-- Make escape hatches explicit upfront
+* The case for killing GoodData UI
 
-  Possible examples:
-  - Add a namespaced / dunderscored prop to globals like ~window~ or ~global~ for debugging in browser/ssr, for example
+1. They do one thing well, and it's not writing React component libraries
+2. Maintaining GoodData UI library is not a direct source of revenue
+   - Unmaintained
+   - Interests are not aligned; updates seem designed to increase the stickiness of their product, not the stickiness of our product
+   - They close tickets without explanation
+   - Documentation is an after-thought
+3. Bundle 👀
+   - Run [[http://127.0.0.1:8888/][yarn profile:frontend bundle]] in KazooWeb
+   - 
+
+* Alternatives
+
+1. Every data-viz libary I found has d3 in their dependency tree somewhere
+   - Most open-source libraries just wrap d3 & tailor it for a specific use-case (none is just right, all have tradeoffs)
+     - By extension, _every library_ comes with a significant tradeoff
+       
+** Library comparison
+       
+| LIB          | PROS                             | CONS                               |
+|--------------+----------------------------------+------------------------------------|
+| =Recharts=   | Declarative API                  | O(n^2), θ(log(n)), Ω(n) ***        |
+|              | Maintained & Popular             | Blackbox interface                 |
+| =Highcharts= | Looks sleek                      | Too many features, hard to opt out |
+| =Victory=    | Customizable, easy to use        | Opinionated                        |
+|              | Dogfooding (company uses it)     | React-Native focus                 |
+| =GoodData=   | Dashboard iframes out of the box | <BadComponents />                  |
+|              |                                  | Package bloat                      |
+| =Nivo=       | Awesome interactivity            | Hard to control animations         |
+|              | /Beautiful/                      | More for prototyping / exploration |
+       
+
+* d3 🤔
+
+1. Leverage CDNs / user caches (d3 has the largest marketshare by far)
+2. Ships ES6 modules (🌴shaking)
 
 
+* Things to think about
 
-- CSS
-  - [ ] styled-components
-  - [ ] tailwind
+1. Might need to write a thin client for GoodData's REST api to avoid using <Execute /> (or write a parser?)
+2. Unsure how long we'd have to live with having d3 and G
+3. Where will data be coming from? Stay in GD for now?
+

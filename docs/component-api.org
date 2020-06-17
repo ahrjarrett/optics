@@ -1,0 +1,24 @@
+* Creating an API for a Data-viz component library
+
+#+BEGIN_QUOTE
+"my thought was the user of the component should be able to pass his expectations as an argument to the visualization component itself — it might be possible to have smart defaults, so the caller has the option to override or refine the validations, but that every data-viz component implements some kind of runtime typechecking. it might take a little extra work, but that would mean other engineers could use the library without needing to understand or even know about the validations"
+-- me
+#+END_QUOTE
+
+
+* Potential API:
+
+#+BEGIN_SRC typescript
+const now = dayjs()
+const threeMonthsAgo = now.subtract(3, 'month')
+
+// Example:
+<InsightSpec.AreaChart 
+  data={data}
+  codec={[
+    {accessor: d => d.user.activity, is: NonEmptyArray },
+    {accessor: d => d.user.updatedAt, is: [DateFromISOString, greaterThan(threeMonthsAgo)] },
+	{accessor: d => d.user.hgId, is: fromNullable}
+  ]}
+/>
+#+END_SRC
