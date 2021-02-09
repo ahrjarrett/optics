@@ -1,17 +1,17 @@
-import React, {createContext, useContext, useEffect, useRef} from 'react';
+import React, { createContext, useContext, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import dayjs from 'dayjs';
 import minMax from 'dayjs/plugin/minMax';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
-import {scaleTime, scaleLinear} from 'd3-scale';
-import {AxisDomain} from 'd3-axis';
-import {select} from 'd3-selection';
-import {some, none, Option} from 'fp-ts/lib/Option';
-import {ReadonlyRecord} from 'fp-ts/lib/ReadonlyRecord';
-import {pipe} from 'fp-ts/lib/pipeable';
+import { scaleTime, scaleLinear } from 'd3-scale';
+import { AxisDomain } from 'd3-axis';
+import { select } from 'd3-selection';
+import { some, none, Option } from 'fp-ts/lib/Option';
+import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord';
+import { pipe } from 'fp-ts/lib/pipeable';
 
-import {Axis} from 'components/Axis';
-import {Tooltip} from 'components/Tooltip';
+import { Axis } from 'components/Axis';
+import { Tooltip } from 'components/Tooltip';
 import {
   AppData,
   ContextType,
@@ -23,7 +23,7 @@ import {
   D3Ref,
   YScale,
 } from 'types';
-import {Input, Update} from 'types/codecs';
+import { Input, Update } from 'types/codecs';
 
 import {
   groupBy,
@@ -100,13 +100,13 @@ const months: Record<number, string> = {
   11: 'DEC',
 };
 
-const toX = (datum: GroupedInput): {x: WeekMonth} =>
+const toX = (datum: GroupedInput): { x: WeekMonth } =>
   freeMonoid(datum)
     .map(prop('week'))
     .map(Number)
-    .map(x => new Date(x))
-    .map(d => dayjs(d))
-    .map(d => ({
+    .map((x) => new Date(x))
+    .map((d) => dayjs(d))
+    .map((d) => ({
       x: {
         week: d.week().valueOf(),
         month: d.month(),
@@ -141,13 +141,13 @@ function useGradient(ref: D3Ref, yScale: YScale) {
       .attr('y2', yScale(2))
       .selectAll('stop')
       .data([
-        {offset: '0%', color: 'rgba(42, 92, 219, 0.1)'},
-        {offset: '86.62%', color: 'rgba(46, 91, 255, 1e-05)'},
+        { offset: '0%', color: 'rgba(42, 92, 219, 0.1)' },
+        { offset: '86.62%', color: 'rgba(46, 91, 255, 1e-05)' },
       ])
       .enter()
       .append('stop')
-      .attr('offset', d => d.offset)
-      .attr('stop-color', d => d.color);
+      .attr('offset', (d) => d.offset)
+      .attr('stop-color', (d) => d.color);
   }, [ref, yScale]);
 }
 
@@ -169,7 +169,7 @@ export const LineChart: React.FC<Props> = ({
   const data = pipe(
     input.updates,
     groupBy<string, Update>(groupByWeek),
-    zipRecord,
+    zipRecord
   ).map(buildDataObjs);
 
   const xs = data.map(prop('x'));
@@ -196,14 +196,14 @@ export const LineChart: React.FC<Props> = ({
 
   const line = d3
     .line<Datum>()
-    .x(d => xScale(d.x.week))
-    .y(d => yScale(d.y));
+    .x((d) => xScale(d.x.week))
+    .y((d) => yScale(d.y));
 
   const area = d3
     .area<Datum>()
-    .x(d => xScale(d.x.week))
+    .x((d) => xScale(d.x.week))
     .y0(height)
-    .y1(d => yScale(d.y));
+    .y1((d) => yScale(d.y));
 
   useGradient(d3Ref, yScale);
 
