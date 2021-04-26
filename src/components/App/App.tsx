@@ -74,6 +74,7 @@ const TextArea: React.FC<TextAreaProps> = ({ setData, data }) => {
   const stringified = JSON.stringify(data, null, 2);
   return (
     <textarea
+      style={{ width: 500, height: 2000 }}
       value={stringified}
       onChange={(e) => setData(JSON.parse(e.currentTarget.value))}
     />
