@@ -1,15 +1,15 @@
-import * as React from 'react'
-import ReactDOM from 'react-dom'
+import * as React from 'react';
+import ReactDOM from 'react-dom';
 
-import {App} from './components/App'
-import * as serviceWorker from 'helpers/serviceWorker'
-import 'styles/index.css'
+import { App } from './components/App';
+import * as serviceWorker from 'helpers/serviceWorker';
+import 'styles/index.css';
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root'),
-)
+  document.getElementById('root')
+);
 
-serviceWorker.unregister()
+serviceWorker.unregister();
